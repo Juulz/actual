@@ -4,9 +4,9 @@ The Settings screen in Actual provides you with a number of options for managing
 
 You can access the Settings screen by clicking the down arrow by your budget name or going to the sidebar and clicking More > Settings.
 
-![Image of Settings top pf page](/img/using-actual/actual-settings.png)
-
 There is an option to "Display a notification when updates are available" here.
+
+![Image of Settings top pf page](/img/using-actual/actual-settings.png)
 
 ### Themes
 
@@ -32,7 +32,7 @@ The language choice alters the display language of all text. If you encounter a 
 
 ### Authentication Method
 
-OpenID can be enabled here. [Authenticating With an OpenID Provider](/docs/config/oauth-auth)
+OpenID can be enabled here. [Learn more](/docs/config/oauth-auth)
 
 ![Image of OpenID setting](/img/using-actual/actual-openid.png)
 
@@ -44,8 +44,11 @@ End-to-end encryption allows you to encrypt the data on your remote server with 
 
 ### Budgeting Method
 
-You can choose either [Envelope](/docs/getting-started/envelope-budgeting) or [Tracking](/docs/getting-started/tracking-budget) Budgeting methods here. 
-Envelope Budgeting is recommended and most of the documentation refers to this method.
+Actual can be used with either Envelope or Tracking Budgeting methods. Envelope Budgeting is recommended and most of the documentation refers to this method.
+<br />
+[Learn more about Envelope Budgeting](/docs/getting-started/envelope-budgeting)
+<br />
+[Learn more about Tracking Budgeting](/docs/getting-started/tracking-budget)
 
 ![Image of budgeting methods setting](/img/using-actual/actual-budget-method.png)
 
