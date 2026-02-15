@@ -50,7 +50,7 @@ export function CategoryAutocompleteModal({
           height: isNarrowWidth
             ? 'calc(var(--visual-viewport-height) * 0.85)'
             : 275,
-          backgroundColor: theme.menuAutoCompleteBackground,
+          backgroundColor: theme.sidebarBackground,
         },
       }}
     >
@@ -61,13 +61,13 @@ export function CategoryAutocompleteModal({
               title={
                 <ModalTitle
                   title={title || t('Category')}
-                  getStyle={() => ({ color: theme.menuAutoCompleteText })}
+                  getStyle={() => ({ color: theme.sidebarItemText })}
                 />
               }
               rightContent={
                 <ModalCloseButton
                   onPress={close}
-                  style={{ color: theme.menuAutoCompleteText }}
+                  style={{ color: theme.sidebarItemText }}
                 />
               }
             />
@@ -78,7 +78,7 @@ export function CategoryAutocompleteModal({
                 title={t('Category')}
                 style={{
                   alignSelf: 'center',
-                  color: theme.menuAutoCompleteText,
+                  color: theme.sidebarItemText,
                   marginBottom: 10,
                 }}
               />
