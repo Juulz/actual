@@ -185,7 +185,7 @@ function defaultRenderItems<T extends AutocompleteItem>(
               cursor: 'default',
               backgroundColor:
                 highlightedIndex === index
-                  ? theme.menuAutoCompleteBackgroundHover
+                  ? theme.sidebarItemBackgroundHover
                   : undefined,
             })}
           >
@@ -621,8 +621,8 @@ function SingleAutocomplete<T extends AutocompleteItem>({
                 style={{
                   ...styles.darkScrollbar,
                   ...styles.popover,
-                  backgroundColor: theme.menuAutoCompleteBackground,
-                  color: theme.menuAutoCompleteText,
+                  backgroundColor: theme.sidebarBackground,
+                  color: theme.sidebarItemText,
                   minWidth: 200,
                   width: triggerRef.current?.clientWidth,
                 }}
