@@ -2,19 +2,20 @@
 import React, { useEffect, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import {
-  ErrorBoundary,
-  useErrorBoundary,
-  type FallbackProps,
-} from 'react-error-boundary';
+import { ErrorBoundary, useErrorBoundary } from 'react-error-boundary';
+import type { FallbackProps } from 'react-error-boundary';
 import { HotkeysProvider } from 'react-hotkeys-hook';
 import { useTranslation } from 'react-i18next';
 import { BrowserRouter } from 'react-router';
 
 import { styles } from '@actual-app/components/styles';
 import { View } from '@actual-app/components/view';
+import { useQueryClient } from '@tanstack/react-query';
 
-import { init as initConnection, send } from 'loot-core/platform/client/fetch';
+import {
+  init as initConnection,
+  send,
+} from 'loot-core/platform/client/connection';
 
 import { AppBackground } from './AppBackground';
 import { BudgetMonthCountProvider } from './budget/BudgetMonthCountContext';
@@ -41,6 +42,7 @@ import { installPolyfills } from '@desktop-client/polyfills';
 import { loadGlobalPrefs } from '@desktop-client/prefs/prefsSlice';
 import { useDispatch, useSelector, useStore } from '@desktop-client/redux';
 import {
+  CustomThemeStyle,
   hasHiddenScrollbars,
   ThemeStyle,
   useTheme,
@@ -74,10 +76,7 @@ function AppInner() {
     };
 
     async function init() {
-      const serverSocket = await maybeUpdate(() =>
-        global.Actual.getServerSocket(),
-      );
-
+      await maybeUpdate();
       dispatch(
         setAppState({
           loadingText: t(
@@ -85,7 +84,7 @@ function AppInner() {
           ),
         }),
       );
-      await initConnection(serverSocket);
+      await initConnection();
 
       // Load any global prefs
       dispatch(
@@ -172,8 +171,9 @@ function ErrorFallback({ error }: FallbackProps) {
 export function App() {
   const store = useStore();
   const isTestEnv = useIsTestEnv();
+  const queryClient = useQueryClient();
 
-  useEffect(() => handleGlobalEvents(store), [store]);
+  useEffect(() => handleGlobalEvents(store, queryClient), [store, queryClient]);
 
   const [hiddenScrollbars, setHiddenScrollbars] = useState(
     hasHiddenScrollbars(),
@@ -240,6 +240,7 @@ export function App() {
                       <AppInner />
                     </ErrorBoundary>
                     <ThemeStyle />
+                    <CustomThemeStyle />
                     <ErrorBoundary FallbackComponent={FatalError}>
                       <Modals />
                     </ErrorBoundary>

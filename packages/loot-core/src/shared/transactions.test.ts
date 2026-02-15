@@ -1,15 +1,15 @@
 // @ts-strict-ignore
 import { v4 as uuidv4 } from 'uuid';
 
-import { type TransactionEntity } from '../types/models';
+import type { TransactionEntity } from '../types/models';
 
 import {
+  addSplitTransaction,
+  deleteTransaction,
+  makeAsNonChildTransactions,
+  makeChild,
   splitTransaction,
   updateTransaction,
-  deleteTransaction,
-  addSplitTransaction,
-  makeChild,
-  makeAsNonChildTransactions,
 } from './transactions';
 
 function makeTransaction(data: Partial<TransactionEntity>): TransactionEntity {

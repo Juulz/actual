@@ -5,8 +5,8 @@ export type FeatureFlag =
   | 'formulaMode'
   | 'currency'
   | 'crossoverReport'
-  | 'plugins'
-  | 'forceReload';
+  | 'customThemes'
+  | 'budgetAnalysisReport';
 
 /**
  * Cross-device preferences. These sync across devices when they are changed.
@@ -23,7 +23,6 @@ export type SyncedPrefs = Partial<
     | 'currencySymbolPosition'
     | 'currencySpaceBetweenAmountAndSymbol'
     | 'defaultCurrencyCode'
-    | 'plugins'
     | `show-account-${string}-net-worth-chart`
     | `side-nav.show-balance-history-${string}`
     | `show-balances-${string}`
@@ -44,6 +43,7 @@ export type SyncedPrefs = Partial<
     | `sync-reimport-deleted-${string}`
     | `sync-import-notes-${string}`
     | `sync-import-transactions-${string}`
+    | `sync-update-dates-${string}`
     | `ofx-fallback-missing-payee-${string}`
     | `flip-amount-${string}-${'csv' | 'qif'}`
     | `flags.${FeatureFlag}`
@@ -117,6 +117,7 @@ export type GlobalPrefs = Partial<{
       colors: Record<string, string>;
     }
   >; // Complete plugin theme metadata
+  installedCustomTheme?: string; // JSON string of installed custom theme
   documentDir: string; // Electron only
   serverSelfSignedCert: string; // Electron only
   syncServerConfig?: {
@@ -145,6 +146,7 @@ export type GlobalPrefsJson = Partial<{
   language?: GlobalPrefs['language'];
   theme?: GlobalPrefs['theme'];
   'preferred-dark-theme'?: GlobalPrefs['preferredDarkTheme'];
+  'installed-custom-theme'?: GlobalPrefs['installedCustomTheme'];
   plugins?: string; // "true" or "false"
   'plugin-theme'?: string; // JSON string of complete plugin theme (current selected plugin theme)
   'server-self-signed-cert'?: GlobalPrefs['serverSelfSignedCert'];
@@ -153,3 +155,7 @@ export type GlobalPrefsJson = Partial<{
 }>;
 
 export type AuthMethods = 'password' | 'openid';
+
+export type ServerPrefs = Partial<{
+  'flags.plugins': 'true' | 'false';
+}>;

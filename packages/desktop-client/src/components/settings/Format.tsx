@@ -1,6 +1,6 @@
 // @ts-strict-ignore
 import React from 'react';
-import { useTranslation, Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { Select } from '@actual-app/components/select';
 import { Text } from '@actual-app/components/text';
@@ -10,7 +10,7 @@ import { View } from '@actual-app/components/view';
 import { css } from '@emotion/css';
 
 import { numberFormats } from 'loot-core/shared/util';
-import { type SyncedPrefs } from 'loot-core/types/prefs';
+import type { SyncedPrefs } from 'loot-core/types/prefs';
 
 import { Column, Setting } from './UI';
 

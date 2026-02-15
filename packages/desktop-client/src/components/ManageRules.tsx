@@ -1,30 +1,25 @@
 // @ts-strict-ignore
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useMemo,
-  type SetStateAction,
-  type Dispatch,
-} from 'react';
+import React, { useEffect, useEffectEvent, useMemo, useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
 import { SpaceBetween } from '@actual-app/components/space-between';
+import { styles } from '@actual-app/components/styles';
 import { Text } from '@actual-app/components/text';
 import { theme } from '@actual-app/components/theme';
 import { View } from '@actual-app/components/view';
 
-import { send } from 'loot-core/platform/client/fetch';
+import { send } from 'loot-core/platform/client/connection';
 import * as undo from 'loot-core/platform/client/undo';
 import { getNormalisedString } from 'loot-core/shared/normalisation';
 import { q } from 'loot-core/shared/query';
-import { mapField, friendlyOp } from 'loot-core/shared/rules';
+import { friendlyOp, mapField } from 'loot-core/shared/rules';
 import { describeSchedule } from 'loot-core/shared/schedules';
-import {
-  type RuleEntity,
-  type NewRuleEntity,
-  type ScheduleEntity,
+import type {
+  NewRuleEntity,
+  RuleEntity,
+  ScheduleEntity,
 } from 'loot-core/types/models';
 
 import { InfiniteScrollWrapper } from './common/InfiniteScrollWrapper';
@@ -38,8 +33,8 @@ import { useCategories } from '@desktop-client/hooks/useCategories';
 import { usePayees } from '@desktop-client/hooks/usePayees';
 import { useSchedules } from '@desktop-client/hooks/useSchedules';
 import {
-  useSelected,
   SelectedProvider,
+  useSelected,
 } from '@desktop-client/hooks/useSelected';
 import { pushModal } from '@desktop-client/modals/modalsSlice';
 import { getPayees } from '@desktop-client/payees/payeesSlice';
@@ -139,7 +134,7 @@ export function ManageRules({
   const { schedules = [] } = useSchedules({
     query: useMemo(() => q('schedules').select('*'), []),
   });
-  const { list: categories } = useCategories();
+  const { data: { list: categories } = { list: [] } } = useCategories();
   const payees = usePayees();
   const accounts = useAccounts();
   const filterData = useMemo(
@@ -167,17 +162,15 @@ export function ManageRules({
             ),
           )
     ).slice(0, 100 + page * 50);
-  }, [allRules, filter, filterData, page]);
+  }, [allRules, filter, filterData, page, schedules]);
+
   const selectedInst = useSelected('manage-rules', filteredRules, []);
   const [hoveredRule, setHoveredRule] = useState(null);
 
-  const onSearchChange = useCallback(
-    (value: string) => {
-      setFilter(value);
-      setPage(0);
-    },
-    [setFilter],
-  );
+  const onSearchChange = (value: string) => {
+    setFilter(value);
+    setPage(0);
+  };
 
   async function loadRules() {
     setLoading(true);
@@ -195,7 +188,7 @@ export function ManageRules({
     return loadedRules;
   }
 
-  useEffect(() => {
+  const init = useEffectEvent(() => {
     async function loadData() {
       await loadRules();
       setLoading(false);
@@ -212,13 +205,16 @@ export function ManageRules({
     return () => {
       undo.setUndoState('openModal', null);
     };
+  });
+  useEffect(() => {
+    return init();
   }, []);
 
   function loadMore() {
     setPage(page => page + 1);
   }
 
-  const onDeleteSelected = useCallback(async () => {
+  const onDeleteSelected = async () => {
     setLoading(true);
 
     const { someDeletionsFailed } = await send('rule-delete-all', [
@@ -234,7 +230,7 @@ export function ManageRules({
     await loadRules();
     selectedInst.dispatch({ type: 'select-none' });
     setLoading(false);
-  }, [selectedInst]);
+  };
 
   async function onDeleteRule(id: string) {
     setLoading(true);
@@ -243,7 +239,7 @@ export function ManageRules({
     setLoading(false);
   }
 
-  const onEditRule = useCallback(rule => {
+  const onEditRule = rule => {
     dispatch(
       pushModal({
         modal: {
@@ -258,7 +254,7 @@ export function ManageRules({
         },
       }),
     );
-  }, []);
+  };
 
   function onCreateRule() {
     const rule: NewRuleEntity = {
@@ -298,9 +294,9 @@ export function ManageRules({
     );
   }
 
-  const onHover = useCallback(id => {
+  const onHover = id => {
     setHoveredRule(id);
-  }, []);
+  };
 
   return (
     <SelectedProvider instance={selectedInst}>
@@ -341,7 +337,7 @@ export function ManageRules({
             onChange={onSearchChange}
           />
         </View>
-        <View style={{ flex: 1 }}>
+        <View style={styles.tableContainer}>
           <RulesHeader />
           <InfiniteScrollWrapper loadMore={loadMore}>
             {filteredRules.length === 0 ? (

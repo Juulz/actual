@@ -1,15 +1,15 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { styles } from '@actual-app/components/styles';
 import { theme } from '@actual-app/components/theme';
 import { View } from '@actual-app/components/view';
 
-import { send, listen } from 'loot-core/platform/client/fetch';
+import { listen, send } from 'loot-core/platform/client/connection';
 import * as undo from 'loot-core/platform/client/undo';
 import { getNormalisedString } from 'loot-core/shared/normalisation';
 import { q } from 'loot-core/shared/query';
-import { type RuleEntity } from 'loot-core/types/models';
+import type { RuleEntity } from 'loot-core/types/models';
 
 import { AddRuleButton } from './AddRuleButton';
 import { RulesList } from './RulesList';
@@ -40,7 +40,7 @@ export function MobileRulesPage() {
   const { schedules = [] } = useSchedules({
     query: useMemo(() => q('schedules').select('*'), []),
   });
-  const { list: categories } = useCategories();
+  const { data: { list: categories } = { list: [] } } = useCategories();
   const payees = usePayees();
   const accounts = useAccounts();
   const filterData = useMemo(

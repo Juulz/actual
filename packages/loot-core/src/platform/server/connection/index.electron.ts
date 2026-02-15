@@ -1,9 +1,8 @@
 // @ts-strict-ignore
 import { APIError } from '../../../server/errors';
-import { logger } from '../log';
-
-import { runHandler, isMutating } from '../../../server/mutators';
+import { isMutating, runHandler } from '../../../server/mutators';
 import { captureException } from '../../exceptions';
+import { logger } from '../log';
 
 import type * as T from './index-types';
 
@@ -53,7 +52,7 @@ export const init: T.Init = function (_socketName, handlers) {
               result: { error, data: null },
             });
           } else {
-            process.parentPort.postMessage({ type: 'error', id });
+            process.parentPort.postMessage({ type: 'error', id, error });
           }
 
           if (error.type === 'InternalError' && name !== 'api/load-budget') {
@@ -67,14 +66,25 @@ export const init: T.Init = function (_socketName, handlers) {
         },
       );
     } else {
-      logger.warn('Unknown method: ' + name);
+      logger.error('Unknown server method: ' + name);
       captureException(new Error('Unknown server method: ' + name));
-      process.parentPort.postMessage({
-        type: 'reply',
-        id,
-        result: null,
-        error: APIError('Unknown method: ' + name),
-      });
+      const unknownMethodError = APIError('Unknown server method: ' + name);
+
+      if (catchErrors) {
+        process.parentPort.postMessage({
+          type: 'reply',
+          id,
+          result: catchErrors
+            ? { error: unknownMethodError, data: null }
+            : null,
+        });
+      } else {
+        process.parentPort.postMessage({
+          type: 'error',
+          id,
+          error: unknownMethodError,
+        });
+      }
     }
   });
 };

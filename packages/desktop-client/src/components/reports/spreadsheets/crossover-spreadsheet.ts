@@ -2,9 +2,9 @@ import * as d from 'date-fns';
 
 import * as monthUtils from 'loot-core/shared/months';
 import { q } from 'loot-core/shared/query';
-import { type AccountEntity } from 'loot-core/types/models';
+import type { AccountEntity } from 'loot-core/types/models';
 
-import { type useSpreadsheet } from '@desktop-client/hooks/useSpreadsheet';
+import type { useSpreadsheet } from '@desktop-client/hooks/useSpreadsheet';
 import { aqlQuery } from '@desktop-client/queries/aqlQuery';
 
 type MonthlyAgg = { date: string; amount: number };
@@ -19,6 +19,12 @@ function calculateMedian(values: number[]): number {
   return sorted.length % 2 === 0
     ? (sorted[mid - 1] + sorted[mid]) / 2
     : sorted[mid];
+}
+
+function calculateMean(values: number[]): number {
+  if (values.length === 0) return 0;
+  const sum = values.reduce((acc, val) => acc + val, 0);
+  return sum / values.length;
 }
 
 function calculateMAD(values: number[], median: number): number {
@@ -43,6 +49,30 @@ function calculateHampelFilteredMedian(expenses: number[]): number {
   return calculateMedian(filteredExpenses);
 }
 
+// Type for the return value of the recalculate function
+export type CrossoverData = {
+  graphData: {
+    data: Array<{
+      x: string;
+      investmentIncome: number;
+      expenses: number;
+      nestEgg: number;
+      adjustedExpenses?: number;
+      isProjection?: boolean;
+    }>;
+    start: string;
+    end: string;
+    crossoverXLabel: string | null;
+  };
+  lastKnownBalance: number;
+  lastKnownMonthlyIncome: number;
+  lastKnownMonthlyExpenses: number;
+  historicalReturn: number | null;
+  yearsToRetire: number | null;
+  targetMonthlyIncome: number | null;
+  targetNestEgg: number | null;
+};
+
 export type CrossoverParams = {
   start: string;
   end: string;
@@ -50,7 +80,8 @@ export type CrossoverParams = {
   incomeAccountIds: AccountEntity['id'][]; // selected accounts for both historical returns and projections
   safeWithdrawalRate: number; // annual percent, e.g. 0.04 for 4%
   estimatedReturn?: number | null; // optional annual return to project future balances
-  projectionType: 'trend' | 'hampel'; // expense projection method
+  expectedContribution?: number | null; // optional monthly contribution to project future balances
+  projectionType: 'hampel' | 'median' | 'mean'; // expense projection method
   expenseAdjustmentFactor?: number; // multiplier for expenses (default 1.0)
 };
 
@@ -61,6 +92,7 @@ export function createCrossoverSpreadsheet({
   incomeAccountIds,
   safeWithdrawalRate,
   estimatedReturn,
+  expectedContribution,
   projectionType,
   expenseAdjustmentFactor,
 }: CrossoverParams) {
@@ -169,6 +201,7 @@ export function createCrossoverSpreadsheet({
           incomeAccountIds,
           safeWithdrawalRate,
           estimatedReturn,
+          expectedContribution,
           projectionType,
           expenseAdjustmentFactor,
         },
@@ -188,6 +221,7 @@ function recalculate(
     | 'incomeAccountIds'
     | 'safeWithdrawalRate'
     | 'estimatedReturn'
+    | 'expectedContribution'
     | 'projectionType'
     | 'expenseAdjustmentFactor'
   >,
@@ -304,6 +338,11 @@ function recalculate(
     }
   }
 
+  // Use user-provided contribution, or default to 0
+  // (We don't use historical contribution as default because the historical
+  // return calculation already includes contributions)
+  const monthlyContribution = params.expectedContribution ?? 0;
+
   if (months.length > 0) {
     // If no explicit return provided, use the calculated default
     if (monthlyReturn == null) {
@@ -314,50 +353,35 @@ function recalculate(
     const maxProjectionMonths = 600;
     let projectedBalance = lastBalance;
     let monthCursor = d.parseISO(months[months.length - 1] + '-01');
-    // Calculate expense projection parameters based on projection type
-    let expenseSlope = 0;
-    let expenseIntercept = lastExpense;
-    let hampelFilteredExpense = 0;
+    let flatExpense = 0;
 
     const y: number[] = months.map(m => expenseMap.get(m) || 0);
 
-    if (params.projectionType === 'trend') {
-      // Linear trend calculation: y = a + b * t
-      const x: number[] = months.map((_m, i) => i);
-      const n = x.length;
-      const sumX = x.reduce((a, b) => a + b, 0);
-      const sumY = y.reduce((a, b) => a + b, 0);
-      const sumXY = x.reduce((a, xi, idx) => a + xi * y[idx], 0);
-      const sumX2 = x.reduce((a, xi) => a + xi * xi, 0);
-      const denom = n * sumX2 - sumX * sumX;
-      if (denom !== 0) {
-        expenseSlope = (n * sumXY - sumX * sumY) / denom;
-        expenseIntercept = (sumY - expenseSlope * sumX) / n;
-      }
-    } else if (params.projectionType === 'hampel') {
+    if (params.projectionType === 'hampel') {
       // Hampel filtered median calculation
-      hampelFilteredExpense = calculateHampelFilteredMedian(y);
+      flatExpense = calculateHampelFilteredMedian(y);
+    } else if (params.projectionType === 'median') {
+      // Plain median calculation without filtering
+      flatExpense = calculateMedian(y);
+    } else if (params.projectionType === 'mean') {
+      // Mean (average) calculation
+      flatExpense = calculateMean(y);
     }
 
     for (let i = 1; i <= maxProjectionMonths; i++) {
       monthCursor = d.addMonths(monthCursor, 1);
-      // grow balance
+
+      // Add contribution BEFORE applying growth
+      projectedBalance = projectedBalance + monthlyContribution;
+
+      // Then grow balance
       if (monthlyReturn != null) {
         projectedBalance = projectedBalance * (1 + monthlyReturn);
       }
+
       const projectedIncome = projectedBalance * monthlySWR;
 
-      // Project expenses based on projection type
-      let projectedExpenses: number;
-      if (params.projectionType === 'trend') {
-        projectedExpenses = Math.max(
-          0,
-          expenseIntercept + expenseSlope * (months.length - 1 + i),
-        );
-      } else {
-        // Hampel filtered median - flat projection
-        projectedExpenses = Math.max(0, hampelFilteredExpense);
-      }
+      const projectedExpenses = Math.max(0, flatExpense);
 
       // Calculate adjusted expenses
       const adjustedProjectedExpenses = projectedExpenses * adjustmentFactor;

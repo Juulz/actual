@@ -1,13 +1,13 @@
 // @ts-strict-ignore
 import {
-  makeClock,
-  setClock,
-  serializeClock,
   deserializeClock,
   makeClientId,
+  makeClock,
+  serializeClock,
+  setClock,
   Timestamp,
 } from '@actual-app/crdt';
-import { type Database } from '@jlongster/sql.js';
+import type { Database } from '@jlongster/sql.js';
 import { LRUCache } from 'lru-cache';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -15,38 +15,38 @@ import * as fs from '../../platform/server/fs';
 import * as sqlite from '../../platform/server/sqlite';
 import * as monthUtils from '../../shared/months';
 import { groupById } from '../../shared/util';
-import { type TransactionEntity } from '../../types/models';
-import { type WithRequired } from '../../types/util';
+import type { TransactionEntity } from '../../types/models';
+import type { WithRequired } from '../../types/util';
 import {
-  schema,
-  schemaConfig,
   convertForInsert,
   convertForUpdate,
   convertFromSelect,
+  schema,
+  schemaConfig,
 } from '../aql';
 import {
-  toDateRepr,
   accountModel,
-  categoryModel,
   categoryGroupModel,
+  categoryModel,
   payeeModel,
+  toDateRepr,
 } from '../models';
-import { sendMessages, batchMessages } from '../sync';
+import { batchMessages, sendMessages } from '../sync';
 
 import { shoveSortOrders, SORT_INCREMENT } from './sort';
-import {
-  type DbAccount,
-  type DbBank,
-  type DbCategory,
-  type DbCategoryGroup,
-  type DbCategoryMapping,
-  type DbClockMessage,
-  type DbPayee,
-  type DbPayeeMapping,
-  type DbTag,
-  type DbTransaction,
-  type DbViewTransaction,
-  type DbViewTransactionInternalAlive,
+import type {
+  DbAccount,
+  DbBank,
+  DbCategory,
+  DbCategoryGroup,
+  DbCategoryMapping,
+  DbClockMessage,
+  DbPayee,
+  DbPayeeMapping,
+  DbTag,
+  DbTransaction,
+  DbViewTransaction,
+  DbViewTransactionInternalAlive,
 } from './types';
 
 export * from './types';

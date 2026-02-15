@@ -1,4 +1,5 @@
-import { type CSSProperties, type ReactNode, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
@@ -20,7 +21,7 @@ import { SectionLabel } from '@desktop-client/components/forms';
 import { LabeledCheckbox } from '@desktop-client/components/forms/LabeledCheckbox';
 import { DateSelect } from '@desktop-client/components/select/DateSelect';
 import { useDateFormat } from '@desktop-client/hooks/useDateFormat';
-import { type Modal as ModalType } from '@desktop-client/modals/modalsSlice';
+import type { Modal as ModalType } from '@desktop-client/modals/modalsSlice';
 
 const itemStyle: CSSProperties = {
   fontSize: 17,
@@ -109,7 +110,6 @@ export function EditFieldModal({
           value={formatDate(parseISO(today), dateFormat)}
           dateFormat={dateFormat}
           embedded
-          onUpdate={() => {}}
           onSelect={date => {
             onSelect(dayFromDate(parseDate(date, 'yyyy-MM-dd', new Date())));
             close();

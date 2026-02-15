@@ -1,19 +1,21 @@
 import {
   createElement,
   createRef,
-  type CSSProperties,
-  type ForwardedRef,
   forwardRef,
-  type KeyboardEvent,
   memo,
-  type ReactNode,
-  type Ref,
-  type RefObject,
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
+} from 'react';
+import type {
+  CSSProperties,
+  ForwardedRef,
+  KeyboardEvent,
+  ReactNode,
+  Ref,
+  RefObject,
 } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Trans, useTranslation } from 'react-i18next';
@@ -42,8 +44,10 @@ import { theme } from '@actual-app/components/theme';
 import { Tooltip } from '@actual-app/components/tooltip';
 import { View } from '@actual-app/components/view';
 import { format as formatDate, parseISO } from 'date-fns';
+import memoizeOne from 'memoize-one';
 
 import * as monthUtils from 'loot-core/shared/months';
+import { q } from 'loot-core/shared/query';
 import { getStatusLabel } from 'loot-core/shared/schedules';
 import {
   addSplitTransaction,
@@ -58,18 +62,18 @@ import {
 import {
   amountToCurrency,
   currencyToAmount,
-  type IntegerAmount,
   integerToCurrency,
   titleFirst,
 } from 'loot-core/shared/util';
-import {
-  type AccountEntity,
-  type CategoryEntity,
-  type CategoryGroupEntity,
-  type PayeeEntity,
-  type RuleEntity,
-  type ScheduleEntity,
-  type TransactionEntity,
+import type { IntegerAmount } from 'loot-core/shared/util';
+import type {
+  AccountEntity,
+  CategoryEntity,
+  CategoryGroupEntity,
+  PayeeEntity,
+  RuleEntity,
+  ScheduleEntity,
+  TransactionEntity,
 } from 'loot-core/types/models';
 
 import {
@@ -77,22 +81,21 @@ import {
   isLastChild,
   makeTemporaryTransactions,
   selectAscDesc,
-  type SerializedTransaction,
   serializeTransaction,
-  type TransactionEditFunction,
-  type TransactionUpdateFunction,
+} from './table/utils';
+import type {
+  SerializedTransaction,
+  TransactionEditFunction,
+  TransactionUpdateFunction,
 } from './table/utils';
 import { TransactionMenu } from './TransactionMenu';
 
 import { getAccountsById } from '@desktop-client/accounts/accountsSlice';
-import { getCategoriesById } from '@desktop-client/budget/budgetSlice';
 import { AccountAutocomplete } from '@desktop-client/components/autocomplete/AccountAutocomplete';
 import { CategoryAutocomplete } from '@desktop-client/components/autocomplete/CategoryAutocomplete';
 import { PayeeAutocomplete } from '@desktop-client/components/autocomplete/PayeeAutocomplete';
-import {
-  getStatusProps,
-  type StatusTypes,
-} from '@desktop-client/components/schedules/StatusBadge';
+import { getStatusProps } from '@desktop-client/components/schedules/StatusBadge';
+import type { StatusTypes } from '@desktop-client/components/schedules/StatusBadge';
 import { DateSelect } from '@desktop-client/components/select/DateSelect';
 import {
   Cell,
@@ -104,13 +107,18 @@ import {
   Row,
   SelectCell,
   Table,
-  type TableHandleRef,
-  type TableNavigator,
-  type TableProps,
   UnexposedCellContent,
   useTableNavigator,
 } from '@desktop-client/components/table';
-import { useCachedSchedules } from '@desktop-client/hooks/useCachedSchedules';
+import type {
+  TableHandleRef,
+  TableNavigator,
+  TableProps,
+} from '@desktop-client/components/table';
+import {
+  SchedulesProvider,
+  useCachedSchedules,
+} from '@desktop-client/hooks/useCachedSchedules';
 import { useContextMenu } from '@desktop-client/hooks/useContextMenu';
 import {
   DisplayPayeeProvider,
@@ -125,10 +133,8 @@ import {
   useSelectedItems,
 } from '@desktop-client/hooks/useSelected';
 import { SheetNameProvider } from '@desktop-client/hooks/useSheetName';
-import {
-  type SplitsExpandedContextValue,
-  useSplitsExpanded,
-} from '@desktop-client/hooks/useSplitsExpanded';
+import { useSplitsExpanded } from '@desktop-client/hooks/useSplitsExpanded';
+import type { SplitsExpandedContextValue } from '@desktop-client/hooks/useSplitsExpanded';
 import { pushModal } from '@desktop-client/modals/modalsSlice';
 import { NotesTagFormatter } from '@desktop-client/notes/NotesTagFormatter';
 import { addNotification } from '@desktop-client/notifications/notificationsSlice';
@@ -180,7 +186,7 @@ const TransactionHeader = memo(
           fontWeight: 300,
           zIndex: 200,
           color: theme.tableHeaderText,
-          backgroundColor: theme.tableBackground,
+          backgroundColor: theme.tableHeaderBackground,
           paddingRight: `${5 + (scrollWidth ?? 0)}px`,
           borderTopWidth: 1,
           borderBottomWidth: 1,
@@ -1666,7 +1672,8 @@ const Transaction = memo(function Transaction({
               : integerToCurrency(runningBalance)
           }
           valueStyle={{
-            color: runningBalance < 0 ? theme.errorText : theme.noticeTextLight,
+            color:
+              runningBalance < 0 ? theme.numberNegative : theme.numberPositive,
           }}
           style={{ ...styles.tnum, ...amountStyle }}
           width={103}
@@ -2633,8 +2640,10 @@ export const TransactionTable = forwardRef(
         if (e.metaKey || e.ctrlKey) {
           e.preventDefault();
           e.stopPropagation();
-          shouldAddAndClose.current = true;
-          forceRerender({});
+          afterSave(() => {
+            shouldAddAndClose.current = true;
+            forceRerender({});
+          });
         } else if (!e.shiftKey) {
           function getLastTransaction(state: RefObject<TableState>) {
             const { newTransactions } = state.current;
@@ -2705,8 +2714,10 @@ export const TransactionTable = forwardRef(
     }, []);
 
     const onAddAndCloseTemporary = useCallback(() => {
-      shouldAddAndClose.current = true;
-      forceRerender({});
+      afterSave(() => {
+        shouldAddAndClose.current = true;
+        forceRerender({});
+      });
     }, []);
 
     const {
@@ -2986,46 +2997,63 @@ export const TransactionTable = forwardRef(
       [props.transactions, newTransactions],
     );
 
+    const allSchedulesQuery = useMemo(() => q('schedules').select('*'), []);
+
     return (
       <DisplayPayeeProvider transactions={displayPayeeTransactions}>
-        <TransactionTableInner
-          tableRef={mergedRef}
-          listContainerRef={listContainerRef}
-          {...props}
-          transactions={transactionsWithExpandedSplits}
-          transactionMap={transactionMap}
-          transactionsByParent={transactionsByParent}
-          transferAccountsByTransaction={transferAccountsByTransaction}
-          selectedItems={selectedItems}
-          isExpanded={splitsExpanded.isExpanded}
-          onSave={onSave}
-          onDelete={onDelete}
-          onBatchDelete={onBatchDelete}
-          onBatchDuplicate={onBatchDuplicate}
-          onBatchLinkSchedule={onBatchLinkSchedule}
-          onBatchUnlinkSchedule={onBatchUnlinkSchedule}
-          onCreateRule={onCreateRule}
-          onScheduleAction={onScheduleAction}
-          onMakeAsNonSplitTransactions={onMakeAsNonSplitTransactions}
-          onSplit={onSplit}
-          onCheckNewEnter={onCheckNewEnter}
-          onCheckEnter={onCheckEnter}
-          onAddTemporary={onAddTemporary}
-          onAddAndCloseTemporary={onAddAndCloseTemporary}
-          onAddSplit={onAddSplit}
-          onDistributeRemainder={onDistributeRemainder}
-          onCloseAddTransaction={onCloseAddTransaction}
-          onToggleSplit={onToggleSplit}
-          newTransactions={newTransactions ?? []}
-          tableNavigator={tableNavigator}
-          newNavigator={newNavigator}
-          showSelection={props.showSelection}
-          allowSplitTransaction={props.allowSplitTransaction}
-          showHiddenCategories={showHiddenCategories}
-        />
+        <SchedulesProvider query={allSchedulesQuery}>
+          <TransactionTableInner
+            tableRef={mergedRef}
+            listContainerRef={listContainerRef}
+            {...props}
+            transactions={transactionsWithExpandedSplits}
+            transactionMap={transactionMap}
+            transactionsByParent={transactionsByParent}
+            transferAccountsByTransaction={transferAccountsByTransaction}
+            selectedItems={selectedItems}
+            isExpanded={splitsExpanded.isExpanded}
+            onSave={onSave}
+            onDelete={onDelete}
+            onBatchDelete={onBatchDelete}
+            onBatchDuplicate={onBatchDuplicate}
+            onBatchLinkSchedule={onBatchLinkSchedule}
+            onBatchUnlinkSchedule={onBatchUnlinkSchedule}
+            onCreateRule={onCreateRule}
+            onScheduleAction={onScheduleAction}
+            onMakeAsNonSplitTransactions={onMakeAsNonSplitTransactions}
+            onSplit={onSplit}
+            onCheckNewEnter={onCheckNewEnter}
+            onCheckEnter={onCheckEnter}
+            onAddTemporary={onAddTemporary}
+            onAddAndCloseTemporary={onAddAndCloseTemporary}
+            onAddSplit={onAddSplit}
+            onDistributeRemainder={onDistributeRemainder}
+            onCloseAddTransaction={onCloseAddTransaction}
+            onToggleSplit={onToggleSplit}
+            newTransactions={newTransactions ?? []}
+            tableNavigator={tableNavigator}
+            newNavigator={newNavigator}
+            showSelection={props.showSelection}
+            allowSplitTransaction={props.allowSplitTransaction}
+            showHiddenCategories={showHiddenCategories}
+          />
+        </SchedulesProvider>
       </DisplayPayeeProvider>
     );
   },
 );
 
 TransactionTable.displayName = 'TransactionTable';
+
+const getCategoriesById = memoizeOne(
+  (categoryGroups: CategoryGroupEntity[] | null | undefined) => {
+    const res: { [id: CategoryEntity['id']]: CategoryEntity } = {};
+    categoryGroups?.forEach(group => {
+      group.categories?.forEach(cat => {
+        res[cat.id] = cat;
+      });
+    });
+
+    return res;
+  },
+);

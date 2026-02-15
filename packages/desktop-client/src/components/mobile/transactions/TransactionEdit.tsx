@@ -30,7 +30,7 @@ import {
   parseISO,
 } from 'date-fns';
 
-import { send } from 'loot-core/platform/client/fetch';
+import { send } from 'loot-core/platform/client/connection';
 import * as monthUtils from 'loot-core/shared/months';
 import * as Platform from 'loot-core/shared/platform';
 import { q } from 'loot-core/shared/query';
@@ -54,11 +54,11 @@ import {
   integerToCurrency,
   titleFirst,
 } from 'loot-core/shared/util';
-import {
-  type AccountEntity,
-  type CategoryEntity,
-  type PayeeEntity,
-  type TransactionEntity,
+import type {
+  AccountEntity,
+  CategoryEntity,
+  PayeeEntity,
+  TransactionEntity,
 } from 'loot-core/types/models';
 
 import { FocusableAmountInput } from './FocusableAmountInput';
@@ -393,6 +393,8 @@ const ChildTransactionEdit = forwardRef<
     const { t } = useTranslation();
     const { editingField, onRequestActiveEdit, onClearActiveEdit } =
       useSingleActiveEditForm()!;
+    const [hideFraction, _] = useSyncedPref('hideFraction');
+
     const prettyPayee = getPrettyPayee({
       t,
       transaction,
@@ -458,7 +460,7 @@ const ChildTransactionEdit = forwardRef<
                   onClearActiveEdit();
                 }
               }}
-              autoDecimals
+              autoDecimals={String(hideFraction) !== 'true'}
             />
           </View>
         </View>
@@ -582,7 +584,8 @@ const TransactionEditInner = memo<TransactionEditInnerProps>(
         ) || [],
       [unserializedTransactions, dateFormat],
     );
-    const { grouped: categoryGroups } = useCategories();
+    const { data: { grouped: categoryGroups } = { grouped: [] } } =
+      useCategories();
 
     useEffect(() => {
       if (window.history.length === 1) {
@@ -685,8 +688,9 @@ const TransactionEditInner = memo<TransactionEditInnerProps>(
 
       const today = monthUtils.currentDay();
       const isFuture = unserializedTransaction.date > today;
+      const isLinkedToSchedule = !!unserializedTransaction.schedule;
 
-      if (isFuture) {
+      if (isFuture && !isLinkedToSchedule) {
         const upcomingDays = getUpcomingDays(upcomingLength, today);
         const daysUntilTransaction = monthUtils.differenceInCalendarDays(
           unserializedTransaction.date,
@@ -796,8 +800,7 @@ const TransactionEditInner = memo<TransactionEditInnerProps>(
     const onTotalAmountUpdate = useCallback(
       (value: number) => {
         if (transaction.amount !== value) {
-          // @ts-expect-error - fix me
-          onUpdateInner(transaction, 'amount', value.toString());
+          onUpdateInner(transaction, 'amount', value);
         }
       },
       [onUpdateInner, transaction],
@@ -1433,8 +1436,7 @@ function TransactionEditUnconnected({
               newTransaction[field] === 0 ||
               newTransaction[field] === false
             ) {
-              // @ts-expect-error - fix me
-              newTransaction[field] = diff[field];
+              (newTransaction as Record<string, unknown>)[field] = diff[field];
             }
           });
 
@@ -1678,7 +1680,7 @@ type TransactionEditProps = Omit<
 >;
 
 export const TransactionEdit = (props: TransactionEditProps) => {
-  const { list: categories } = useCategories();
+  const { data: { list: categories } = { list: [] } } = useCategories();
   const payees = usePayees();
   const lastTransaction = useSelector(
     state => state.transactions.lastTransaction,

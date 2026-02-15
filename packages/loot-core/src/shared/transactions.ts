@@ -1,9 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
+
 import { logger } from '../platform/server/log';
+import type { TransactionEntity } from '../types/models';
 
-import { type TransactionEntity } from '../types/models';
-
-import { last, diffItems, applyChanges } from './util';
+import { applyChanges, diffItems, last } from './util';
 
 export function isTemporaryId(id: string) {
   return id.indexOf('temp') !== -1;

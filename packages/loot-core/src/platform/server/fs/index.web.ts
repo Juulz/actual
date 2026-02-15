@@ -1,12 +1,12 @@
 // @ts-strict-ignore
 import { SQLiteFS } from 'absurd-sql';
-import { logger } from '../log';
-
 import IndexedDBBackend from 'absurd-sql/dist/indexeddb-backend';
 
 import * as connection from '../connection';
 import * as idb from '../indexeddb';
-import { _getModule, type SqlJsModule } from '../sqlite';
+import { logger } from '../log';
+import { _getModule } from '../sqlite';
+import type { SqlJsModule } from '../sqlite';
 
 import { join } from './path-join';
 

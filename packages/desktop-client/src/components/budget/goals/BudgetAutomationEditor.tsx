@@ -1,5 +1,5 @@
-import { type ReactNode } from 'react';
-import { useTranslation, Trans } from 'react-i18next';
+import type { ReactNode } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { InitialFocus } from '@actual-app/components/initial-focus';
 import { Select } from '@actual-app/components/select';
@@ -13,8 +13,10 @@ import type {
   ScheduleEntity,
 } from 'loot-core/types/models';
 
-import { type Action, setType } from './actions';
-import { displayTemplateTypes, type ReducerState } from './constants';
+import { setType } from './actions';
+import type { Action } from './actions';
+import { displayTemplateTypes } from './constants';
+import type { ReducerState } from './constants';
 import { HistoricalAutomation } from './editor/HistoricalAutomation';
 import { PercentageAutomation } from './editor/PercentageAutomation';
 import { ScheduleAutomation } from './editor/ScheduleAutomation';

@@ -3,9 +3,11 @@ import * as path from 'path';
 import inject from '@rollup/plugin-inject';
 import basicSsl from '@vitejs/plugin-basic-ssl';
 import react from '@vitejs/plugin-react';
+import type { PreRenderedAsset } from 'rollup';
 import { visualizer } from 'rollup-plugin-visualizer';
 /// <reference types="vitest" />
-import { defineConfig, loadEnv, type Plugin, type UserConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
+import type { Plugin } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
 
@@ -29,7 +31,7 @@ const addWatchers = (): Plugin => ({
 const injectShims = (): Plugin[] => {
   const buildShims = path.resolve('./src/build-shims.js');
   const commonInject = {
-    exclude: ['src/setupTests.js'],
+    exclude: ['src/setupTests.ts'],
     global: [buildShims, 'global'],
   };
 
@@ -76,6 +78,7 @@ export default defineConfig(async ({ mode }) => {
   // Forward Netlify env variables
   if (process.env.REVIEW_ID) {
     process.env.REACT_APP_REVIEW_ID = process.env.REVIEW_ID;
+    process.env.REACT_APP_BRANCH = process.env.BRANCH;
   }
 
   let resolveExtensions = [
@@ -121,7 +124,7 @@ export default defineConfig(async ({ mode }) => {
       chunkSizeWarningLimit: 1500,
       rollupOptions: {
         output: {
-          assetFileNames: assetInfo => {
+          assetFileNames: (assetInfo: PreRenderedAsset) => {
             const info = assetInfo.name?.split('.') ?? [];
             let extType = info[info.length - 1];
             if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
@@ -213,7 +216,7 @@ export default defineConfig(async ({ mode }) => {
       include: ['src/**/*.{test,spec}.?(c|m)[jt]s?(x)'],
       environment: 'jsdom',
       globals: true,
-      setupFiles: './src/setupTests.js',
+      setupFiles: './src/setupTests.ts',
       testTimeout: 10000,
       onConsoleLog(log: string, type: 'stdout' | 'stderr'): boolean | void {
         // print only console.error
@@ -221,5 +224,5 @@ export default defineConfig(async ({ mode }) => {
       },
       maxWorkers: 2,
     },
-  } satisfies UserConfig;
+  };
 });

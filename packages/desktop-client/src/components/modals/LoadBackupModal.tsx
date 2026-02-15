@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Block } from '@actual-app/components/block';
@@ -7,8 +7,8 @@ import { Text } from '@actual-app/components/text';
 import { theme } from '@actual-app/components/theme';
 import { View } from '@actual-app/components/view';
 
-import { send, listen } from 'loot-core/platform/client/fetch';
-import { type Backup } from 'loot-core/server/budgetfiles/backups';
+import { listen, send } from 'loot-core/platform/client/connection';
+import type { Backup } from 'loot-core/server/budgetfiles/backups';
 
 import {
   loadBackup,
@@ -19,9 +19,9 @@ import {
   ModalCloseButton,
   ModalHeader,
 } from '@desktop-client/components/common/Modal';
-import { Row, Cell } from '@desktop-client/components/table';
+import { Cell, Row } from '@desktop-client/components/table';
 import { useMetadataPref } from '@desktop-client/hooks/useMetadataPref';
-import { type Modal as ModalType } from '@desktop-client/modals/modalsSlice';
+import type { Modal as ModalType } from '@desktop-client/modals/modalsSlice';
 import { useDispatch } from '@desktop-client/redux';
 
 type BackupTableProps = {

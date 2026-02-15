@@ -1,7 +1,7 @@
-import {
-  type GroupedEntity,
-  type IntervalEntity,
-  type balanceTypeOpType,
+import type {
+  balanceTypeOpType,
+  GroupedEntity,
+  IntervalEntity,
 } from 'loot-core/types/models';
 
 function isEmptyForMetric(

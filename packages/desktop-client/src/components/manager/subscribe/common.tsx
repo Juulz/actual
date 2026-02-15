@@ -4,8 +4,8 @@ import { useLocation } from 'react-router';
 
 import { theme } from '@actual-app/components/theme';
 
-import { send } from 'loot-core/platform/client/fetch';
-import { type Handlers } from 'loot-core/types/handlers';
+import { send } from 'loot-core/platform/client/connection';
+import type { Handlers } from 'loot-core/types/handlers';
 
 import {
   useSetLoginMethods,
@@ -90,7 +90,14 @@ export function useBootstrapped(redirect = true) {
       }
     }
     run();
-  }, [location]);
+  }, [
+    location,
+    navigate,
+    redirect,
+    setLoginMethods,
+    setMultiuserEnabled,
+    setServerURL,
+  ]);
 
   return { checked };
 }

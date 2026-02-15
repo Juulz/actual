@@ -1,6 +1,6 @@
 import { t } from 'i18next';
 
-import { type sortByOpType } from 'loot-core/types/models';
+import type { sortByOpType } from 'loot-core/types/models';
 
 const intervalOptions = [
   {
@@ -36,10 +36,6 @@ const currentIntervalOptions = [
   },
   {
     description: t('Year to date'),
-    disableInclude: true,
-  },
-  {
-    description: t('Last month'),
     disableInclude: true,
   },
   {

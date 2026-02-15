@@ -1,11 +1,5 @@
-import React, {
-  useState,
-  useRef,
-  useEffect,
-  type CSSProperties,
-  useCallback,
-  type ComponentPropsWithoutRef,
-} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import type { ComponentPropsWithoutRef, CSSProperties } from 'react';
 import { GridList, GridListItem } from 'react-aria-components';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -40,12 +34,12 @@ import {
   isElectron,
   isNonProductionEnvironment,
 } from 'loot-core/shared/environment';
-import {
-  type RemoteFile,
-  type File,
-  type LocalFile,
-  type SyncableLocalFile,
-  type SyncedLocalFile,
+import type {
+  File,
+  LocalFile,
+  RemoteFile,
+  SyncableLocalFile,
+  SyncedLocalFile,
 } from 'loot-core/types/file';
 
 import {
@@ -61,7 +55,7 @@ import { useInitialMount } from '@desktop-client/hooks/useInitialMount';
 import { useMetadataPref } from '@desktop-client/hooks/useMetadataPref';
 import { useSyncServerStatus } from '@desktop-client/hooks/useSyncServerStatus';
 import { pushModal } from '@desktop-client/modals/modalsSlice';
-import { useSelector, useDispatch } from '@desktop-client/redux';
+import { useDispatch, useSelector } from '@desktop-client/redux';
 import { getUserData } from '@desktop-client/users/usersSlice';
 
 function getFileDescription(file: File, t: (key: string) => string) {
