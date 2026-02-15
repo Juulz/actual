@@ -281,7 +281,7 @@ function PayeeList({
             style={{
               fontSize: 11,
               padding: 5,
-              color: theme.pageTextLight,
+              color: theme.sidebarItemBackgroundPositive, //make sure this is visible
               textAlign: 'center',
             }}
           >
@@ -623,7 +623,7 @@ function PayeeItem({
     ? {
         ...styles.mobileMenuItem,
         borderRadius: 0,
-        borderTop: `1px solid ${theme.pillBorder}`,
+        borderTop: `1px solid rgba(255, 255, 255, 0.4)`,
       }
     : {};
   const iconSize = isNarrowWidth ? 14 : 8;
@@ -668,11 +668,11 @@ function PayeeItem({
         className,
         css({
           backgroundColor: highlighted
-            ? theme.menuAutoCompleteBackgroundHover
+            ? theme.sidebarItemBackgroundHover
             : 'transparent',
           color: highlighted
-            ? theme.menuAutoCompleteItemTextHover
-            : theme.menuAutoCompleteItemText,
+            ? theme.sidebarItemTextSelected
+            : theme.sidebarItemText,
           borderRadius: embedded ? 4 : 0,
           padding: 4,
           paddingLeft: paddingLeftOverFromIcon,
