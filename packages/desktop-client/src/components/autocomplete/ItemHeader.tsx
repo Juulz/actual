@@ -24,7 +24,7 @@ export function ItemHeader({ title, style, type, ...props }: ItemHeaderProps) {
   return (
     <div
       style={{
-        color: theme.menuAutoCompleteTextHeader,
+        color: theme.sidebarItemTextSelected,
         padding: '4px 9px',
         ...narrowStyle,
         ...style,
