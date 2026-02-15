@@ -278,11 +278,11 @@ function AccountItem({
         className,
         css({
           backgroundColor: highlighted
-            ? theme.menuAutoCompleteBackgroundHover
+            ? theme.sidebarItemBackgroundHover
             : 'transparent',
           color: highlighted
-            ? theme.menuAutoCompleteItemTextHover
-            : theme.menuAutoCompleteItemText,
+            ? theme.sidebarItemTextSelected
+            : theme.sidebarItemText,
           padding: 4,
           paddingLeft: 20,
           borderRadius: embedded ? 4 : 0,
