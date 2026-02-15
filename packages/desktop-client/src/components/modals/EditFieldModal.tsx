@@ -268,7 +268,7 @@ export function EditFieldModal({
             : 275,
           padding: '15px 10px',
           ...(minWidth && { minWidth }),
-          backgroundColor: theme.menuAutoCompleteBackground,
+          backgroundColor: theme.sidebarBackground,
         },
       }}
     >
@@ -286,7 +286,7 @@ export function EditFieldModal({
                 title={label}
                 style={{
                   alignSelf: 'center',
-                  color: theme.menuAutoCompleteText,
+                  color: theme.sidebarItemText,
                   marginBottom: 10,
                 }}
               />
