@@ -247,7 +247,7 @@ function SyncButton({ style, isMobile = false }: SyncButtonProps) {
           ? t('Disabled')
           : syncState === 'offline'
             ? t('Offline')
-            : t('Sync')}
+            : t('Server Sync')}
       </Text>
     </Button>
   );
