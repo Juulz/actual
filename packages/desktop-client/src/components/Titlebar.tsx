@@ -110,7 +110,7 @@ type SyncButtonProps = {
   style?: CSSProperties;
   isMobile?: boolean;
 };
-function SyncButton({ style, isMobile = false }: SyncButtonProps) {
+function ServerSyncButton({ style, isMobile = false }: ServerSyncButtonProps) {
   const { t } = useTranslation();
   const [cloudFileId] = useMetadataPref('cloudFileId');
   const dispatch = useDispatch();
