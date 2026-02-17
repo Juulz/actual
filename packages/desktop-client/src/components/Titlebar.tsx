@@ -106,7 +106,7 @@ function PrivacyButton({ style }: PrivacyButtonProps) {
   );
 }
 
-type SyncButtonProps = {
+type ServerSyncButtonProps = {
   style?: CSSProperties;
   isMobile?: boolean;
 };
@@ -346,7 +346,7 @@ export function Titlebar({ style }: TitlebarProps) {
         <UncategorizedButton />
         {isDevelopmentEnvironment() && !isTestEnv && <ThemeSelector />}
         <PrivacyButton />
-        {serverURL ? <SyncButton /> : null}
+        {serverURL ? <ServerSyncButton /> : null}
         <LoggedInUser />
         <HelpMenu />
       </SpaceBetween>
