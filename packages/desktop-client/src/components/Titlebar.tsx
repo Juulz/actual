@@ -166,7 +166,7 @@ function ServerSyncButton({ style, isMobile = false }: ServerSyncButtonProps) {
       : syncState === 'disabled' ||
           syncState === 'offline' ||
           syncState === 'local'
-        ? theme.tableTextLight
+        ? theme.buttonBareDisabledText
         : 'inherit';
 
   const activeStyle = isMobile
@@ -246,7 +246,7 @@ function ServerSyncButton({ style, isMobile = false }: ServerSyncButtonProps) {
         {syncState === 'disabled'
           ? t('Disabled')
           : syncState === 'offline'
-            ? t('Server Offline')
+            ? t('Sync disabled')
             : t('Server Sync')}
       </Text>
     </Button>
