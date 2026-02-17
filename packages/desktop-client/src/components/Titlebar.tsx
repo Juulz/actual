@@ -213,7 +213,7 @@ function SyncButton({ style, isMobile = false }: SyncButtonProps) {
   return (
     <Button
       variant="bare"
-      aria-label={t('Sync')}
+      aria-label={t('Server Sync')}
       className={css({
         ...(isMobile
           ? {
