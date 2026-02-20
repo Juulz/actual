@@ -231,6 +231,7 @@ function ServerSyncButton({ style, isMobile = false }: ServerSyncButtonProps) {
       })}
       onPress={onSync}
       isDisabled={syncState === 'offline'}
+      aria-disabled={syncState === 'offline'}
     >
       {isMobile ? (
         syncState === 'error' ? (
