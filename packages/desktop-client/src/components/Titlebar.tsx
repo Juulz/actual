@@ -230,6 +230,7 @@ function ServerSyncButton({ style, isMobile = false }: ServerSyncButtonProps) {
         '&[data-pressed]': activeStyle,
       })}
       onPress={onSync}
+      isDisabled={syncState === 'offline'}
     >
       {isMobile ? (
         syncState === 'error' ? (
@@ -245,9 +246,7 @@ function ServerSyncButton({ style, isMobile = false }: ServerSyncButtonProps) {
       <Text style={isMobile ? { ...mobileTextStyle } : { marginLeft: 3 }}>
         {syncState === 'disabled'
           ? t('Disabled')
-          : syncState === 'offline'
-            ? t('Offline')
-            : null}
+          : null}
       </Text>
     </Button>
   );
