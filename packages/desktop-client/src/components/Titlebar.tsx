@@ -244,9 +244,7 @@ function ServerSyncButton({ style, isMobile = false }: ServerSyncButtonProps) {
         <AnimatedRefresh animating={syncing} />
       )}
       <Text style={isMobile ? { ...mobileTextStyle } : { marginLeft: 3 }}>
-        {syncState === 'disabled'
-          ? t('Disabled')
-          : null}
+        {syncState === 'disabled' ? t('Disabled') : null}
       </Text>
     </Button>
   );
