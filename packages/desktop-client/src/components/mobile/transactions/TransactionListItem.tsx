@@ -283,7 +283,11 @@ export function TransactionListItem({
             <Text
               style={{
                 ...styles.tnum,
-                ...makeAmountFullStyle(amount),
+                ...makeAmountFullStyle(amount, {
+                  positiveColor: theme.numberPositive,
+                  negativeColor: theme.numberNegative,
+                  zeroColor: theme.numberNeutral,
+                }),
                 ...textStyle,
               }}
             >
@@ -295,7 +299,11 @@ export function TransactionListItem({
                   fontSize: 11,
                   fontWeight: '400',
                   ...styles.tnum,
-                  ...makeBalanceAmountStyle(runningBalance),
+                  ...makeAmountFullStyle(runningBalance, {
+                    positiveColor: theme.numberPositive,
+                    negativeColor: theme.numberNegative,
+                    zeroColor: theme.numberNeutral,
+                  }),
                 }}
               >
                 {integerToCurrency(runningBalance)}
