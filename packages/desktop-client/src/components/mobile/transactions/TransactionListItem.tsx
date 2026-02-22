@@ -34,10 +34,7 @@ import type { AccountEntity, TransactionEntity } from 'loot-core/types/models';
 
 import { lookupName, Status } from './TransactionEdit';
 
-import {
-  makeAmountFullStyle,
-  makeBalanceAmountStyle,
-} from '@desktop-client/components/budget/util';
+import { makeAmountFullStyle } from '@desktop-client/components/budget/util';
 import { useAccount } from '@desktop-client/hooks/useAccount';
 import { useCachedSchedules } from '@desktop-client/hooks/useCachedSchedules';
 import { useCategories } from '@desktop-client/hooks/useCategories';
