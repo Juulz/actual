@@ -297,7 +297,7 @@ export function TransactionListItem({
                   fontWeight: '400',
                   ...styles.tnum,
                   ...makeAmountFullStyle(runningBalance, {
-                    positiveColor: theme.numberPositive,
+                    positiveColor: theme.tableText,
                     negativeColor: theme.numberNegative,
                     zeroColor: theme.numberNeutral,
                   }),
