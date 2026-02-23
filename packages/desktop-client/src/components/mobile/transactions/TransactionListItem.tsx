@@ -298,7 +298,7 @@ export function TransactionListItem({
                   ...styles.tnum,
                   ...makeAmountFullStyle(runningBalance, {
                     positiveColor: theme.tableText,
-                    negativeColor: theme.numberNegative,
+                    negativeColor: theme.templateNumberUnderfunded,
                     zeroColor: theme.numberNeutral,
                   }),
                 }}
