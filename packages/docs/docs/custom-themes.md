@@ -13,7 +13,7 @@ The easiest way to install a custom theme is to choose one from the catalog:
 3. The theme installer will open showing available themes from the catalog
 4. Click on any theme to install it immediately
 
-Themes in the catalog are hosted on GitHub and are automatically fetched when you select them. Each theme shows a color palette preview (6 colors in a 3x2 grid) and includes a link to its source repository.
+Themes in the catalog are hosted on GitHub and are automatically fetched when you select them. Each theme shows a color palette preview (6 colors in a 3x2 grid) and includes a link to its source repository. If you notice any issues with a theme from the catalog, open an issue with the theme's author.
 
 ### Installing a Theme by Pasting CSS
 
@@ -70,6 +70,20 @@ Custom themes can override any of the CSS variables defined in Actual's base the
 - `packages/desktop-client/src/style/themes/dark.ts`
 - `packages/desktop-client/src/style/themes/midnight.ts`
 
+Three color variables can be customized whose behavior is hidden in the default themes.
+- Alternate color for every other row background in the transaction table
+- Highlight transactions added by sync
+- Highlight sidebar accounts updated by sync
+
+Example for light theme: 
+```css
+:root {
+  --color-tableRowBackgroundAlternate: #f7f7f7;
+  --color-tableTextItemAdded: #690cb0;
+  --color-sidebarItemTextUpdated: #dfccff;
+}
+```
+
 Common variables include:
 
 **Page Colors:**
@@ -86,6 +100,8 @@ Common variables include:
 - `--color-tableText` - Table text
 - `--color-tableBorder` - Table borders
 - `--color-tableRowBackgroundHover` - Row hover background
+- `--color-tableRowBackgroundAlternate` - Color for alternating (every other) transaction table rows
+- `--color-tableTextItemAdded` - Highlight ransactions added by bank sync
 
 **Button Colors:**
 
@@ -99,6 +115,7 @@ Common variables include:
 - `--color-sidebarBackground` - Sidebar background
 - `--color-sidebarItemText` - Sidebar item text
 - `--color-sidebarItemTextSelected` - Selected sidebar item text
+- `--color-sidebarItemTextUpdated` - Highlight sidebar accounts updated by bank sync
 
 **Graph Colors:**
 
