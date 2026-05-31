@@ -56,3 +56,11 @@ When "Merge with existing transactions" is enabled, a **Reimport deleted transac
 :::note
 The [API](/docs/api/reference#importtransactions) defaults `reimportDeleted` to `true` for backward compatibility. If you are importing via the API and want to skip deleted transactions, pass `reimportDeleted: false` explicitly.
 :::
+
+## Newly Added Transactions
+
+When new, unmatched transactions are added to an account, either by _Bank Sync_ or _Import_, they show in **bold** font in the transaction list. This makes it easier to find them for review. Transactions revert to a normal font after they are edited or the page is refreshed.
+
+When you perform a _Bank Sync_ while viewing **All Accounts**, **On Budget** or **Off Budget**, any accounts updated with new transactions will show in **bold** font. Accounts revert to a normal font when you select the account from the sidebar or the page is refreshed.
+
+If you are having trouble picking out the bold transactions or accounts, a custom color highlight can be added to the text. [Learn more](/docs/custom-themes)
