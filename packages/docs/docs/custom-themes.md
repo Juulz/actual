@@ -79,8 +79,8 @@ Example for light theme:
 ```css
 :root {
   --color-tableRowBackgroundAlternate: #f7f7f7;
-  --color-tableTextItemAdded: #690cb0;
-  --color-sidebarItemTextUpdated: #dfccff;
+  --color-tableTextItemAdded: #9900cc;
+  --color-sidebarItemTextUpdated: #ecb3ff;
 }
 ```
 
