@@ -43,7 +43,7 @@ If desired, you can manually add transactions. This is the most work but allows 
 2. Press the **Add New** button.
 3. Fill out the transaction and press **Add**.
 
-## Avoiding duplicate transactions
+## Avoiding Duplicate Transactions
 
 Actual will automatically try to avoid duplicate transactions. This works best with OFX/QFX files since they provide rich data about transactions. They provide an **id** that we can use to avoid importing duplicates.
 
