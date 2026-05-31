@@ -72,8 +72,8 @@ Custom themes can override any of the CSS variables defined in Actual's base the
 
 Three color variables can be customized whose behavior is hidden in the default themes.
 - Alternate color for every other row background in the transaction table
-- Highlight transactions added by sync
-- Highlight sidebar accounts updated by sync
+- Highlight transactions added by bank sync or import
+- Highlight sidebar accounts updated by bank sync or import
 
 Example for light theme: 
 ```css
@@ -101,7 +101,7 @@ Common variables include:
 - `--color-tableBorder` - Table borders
 - `--color-tableRowBackgroundHover` - Row hover background
 - `--color-tableRowBackgroundAlternate` - Color for alternating (every other) transaction table rows
-- `--color-tableTextItemAdded` - Highlight ransactions added by bank sync
+- `--color-tableTextItemAdded` - Highlight ransactions added by bank sync or import
 
 **Button Colors:**
 
@@ -115,7 +115,7 @@ Common variables include:
 - `--color-sidebarBackground` - Sidebar background
 - `--color-sidebarItemText` - Sidebar item text
 - `--color-sidebarItemTextSelected` - Selected sidebar item text
-- `--color-sidebarItemTextUpdated` - Highlight sidebar accounts updated by bank sync
+- `--color-sidebarItemTextUpdated` - Highlight sidebar accounts updated by bank sync or import
 
 **Graph Colors:**
 
