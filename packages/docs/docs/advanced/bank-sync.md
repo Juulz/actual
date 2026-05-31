@@ -17,11 +17,13 @@ Here are a couple of considerations to know about before making the decision to 
 - [SimpleFIN Bridge](/docs/advanced/bank-sync/simplefin) (North American Banks)
 - [Pluggy.ai](/docs/advanced/bank-sync/pluggyai) (Brazilian Banks)
 
-### Retrieve Transactions
+## Retrieve Transactions
 
 Actual does **not** sync bank data automatically. To fetch new transactions manually:
 
-- To sync all accounts: click **All Accounts** in the sidebar, then click **Bank Sync**.
-- To sync a single account: open the account and click the Bank Sync button.
+![Bank Sync button](/img/connecting-your-bank/connecting-your-bank-simplefin-10.webp)
 
-  ![](/img/connecting-your-bank/connecting-your-bank-simplefin-10.webp)
+- To sync all accounts, select **All Accounts** in the sidebar and click _Bank Sync_.
+- To sync a single account, select the account and click _Bank Sync_.
+
+See [Importing Transactions](/docs/transactions/importing) for more information.
