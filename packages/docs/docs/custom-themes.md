@@ -70,7 +70,7 @@ Custom themes can override any of the CSS variables defined in Actual's base the
 - `packages/desktop-client/src/style/themes/dark.ts`
 - `packages/desktop-client/src/style/themes/midnight.ts`
 
-Three color variables can be customized whose behavior is hidden in the default themes.
+Some color variables can be customized whose behavior is hidden in the default themes.
 - Alternate color for every other row background in the transaction table
 - Highlight transactions added by bank sync or import
 - Highlight sidebar accounts updated by bank sync or import
