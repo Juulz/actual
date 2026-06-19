@@ -1359,6 +1359,7 @@ const Transaction = memo(function Transaction({
           ...(isPreview && {
             color: theme.tableTextInactive,
             fontStyle: 'italic',
+            backgroundColor: `color-mix(in srgb, ${theme.tableBackground} 10%, transparent)`,
           }),
           ...(_unmatched && { opacity: 0.5 }),
           ...(isBeingDragged && { opacity: 0.5 }),
